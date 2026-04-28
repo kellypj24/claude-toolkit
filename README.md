@@ -1,0 +1,62 @@
+# claude-toolkit
+
+Portable Claude Code enhancements: status line, hooks, and prompts.
+
+## Install
+
+```bash
+git clone <your-remote> ~/claude-toolkit
+cd ~/claude-toolkit
+bash install.sh
+```
+
+Restart Claude Code. The status line appears at the bottom of every session.
+
+## Status line
+
+Shows (left to right):
+- **Model** — current Claude model name
+- **Branch** — git branch of the project directory
+- **Context %** — percentage of context window used, with a bar (green/yellow/red)
+- **Tokens** — input token count for current context
+- **Cost** — estimated session cost in USD
+- **5h limit** — 5-hour rate limit consumption %
+- **7d limit** — 7-day rate limit consumption %
+
+The script lives at `statusline/statusline.sh`. `install.sh` copies it to
+`~/.claude/statusline/statusline.sh` and updates `~/.claude/settings.json`.
+
+To tweak the display, edit `statusline/statusline.sh` and re-run `bash install.sh`.
+
+## Hooks
+
+| File | Event | What it does |
+|------|-------|--------------|
+| `hooks/notify-on-stop.sh` | Stop / StopFailure | macOS notification when Claude finishes |
+
+To enable a hook, add it to `~/.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "Stop": [{ "type": "command", "command": "~/.claude/hooks/notify-on-stop.sh" }],
+    "StopFailure": [{ "type": "command", "command": "~/.claude/hooks/notify-on-stop.sh" }]
+  }
+}
+```
+
+## Prompts
+
+Ready-to-paste system prompts in `prompts/system-prompts/`:
+
+| File | Use case |
+|------|----------|
+| `senior-engineer.md` | General coding sessions |
+| `data-engineer.md` | dbt / Airflow / pipeline work |
+| `rubber-duck.md` | Problem-solving, thinking out loud |
+
+## Taking it with you
+
+The only machine-specific path is in `~/.claude/settings.json` (the absolute path
+to the statusline script). `install.sh` writes that path at install time, so on a
+new machine just clone the repo and re-run `bash install.sh`.

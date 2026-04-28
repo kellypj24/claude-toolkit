@@ -35,7 +35,7 @@ else
   existing="{}"
 fi
 
-# Merge statusLine config using jq
+# Merge statusLine + rtk hook config using jq
 updated=$(echo "$existing" | jq \
   --arg cmd "$STATUSLINE_CMD" \
   '. + {
@@ -44,11 +44,28 @@ updated=$(echo "$existing" | jq \
       "command": $cmd,
       "padding": 1,
       "refreshInterval": 10
+    },
+    "hooks": {
+      "PreToolUse": [
+        {
+          "matcher": "Bash",
+          "hooks": [{ "type": "command", "command": "rtk hook claude" }]
+        }
+      ]
     }
   }')
 
 echo "$updated" > "$SETTINGS"
 echo "  ✓ settings.json updated"
+
+# ── RTK ────────────────────────────────────────────────────────────────────────
+if ! command -v rtk &>/dev/null; then
+  echo ""
+  echo "  ⚠  rtk not found. Install it to enable token compression (~80% savings):"
+  echo "     brew install rtk"
+else
+  echo "  ✓ rtk already installed ($(rtk --version 2>/dev/null || echo unknown))"
+fi
 
 echo ""
 echo "Done. Restart Claude Code to see the status line."

@@ -55,6 +55,12 @@ Ready-to-paste system prompts in `prompts/system-prompts/`:
 | `data-engineer.md` | dbt / Airflow / pipeline work |
 | `rubber-duck.md` | Problem-solving, thinking out loud |
 
+## claude-review
+
+Opt-in pre-push Claude review for any repo that uses pre-commit. Separate
+installer (needs `uv` and network): `bash claude-review/install.sh`, then
+enable per repo. See [claude-review/README.md](claude-review/README.md).
+
 ## Taking it with you
 
 The only machine-specific path is in `~/.claude/settings.json` (the absolute path

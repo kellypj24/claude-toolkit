@@ -36,6 +36,7 @@ To tweak the display, edit `statusline/statusline.sh` and re-run `bash install.s
 | `hooks/notify-on-stop.sh` | Stop | Chime + macOS notification when Claude finishes (`CLAUDE_STOP_SOUND` overrides) |
 | `hooks/notify-on-input.sh` | Notification | Chime + notification on permission prompts and idle waits (`CLAUDE_INPUT_SOUND` overrides) |
 | `hooks/pre-push-check.sh` | PreToolUse (Bash) | Blocks `git push` until local validation is confirmed; `git config claude.prepushAck true` lets `PREPUSH_ACK=1` through |
+| `hooks/secret-guard.sh` | UserPromptSubmit | Blocks a prompt holding a credential (keychain `-w` value, bot token, API key, 48-hex token) before the model sees it, so it never lands in a transcript. `!` commands skip it: use `security add-generic-password ... -w` with no value |
 | `hooks/word-budget.sh` | SessionStart | Flags `~/.claude/CLAUDE.md`, any `MEMORY.md` index or a personal skill over its word budget; silent otherwise |
 
 `install.sh` registers each hook for its event unless that command is

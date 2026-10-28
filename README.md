@@ -5,7 +5,7 @@ Portable Claude Code enhancements: status line, hooks, and prompts.
 ## Install
 
 ```bash
-git clone <your-remote> ~/claude-toolkit
+git clone https://github.com/kellypj24/claude-toolkit ~/claude-toolkit
 cd ~/claude-toolkit
 bash install.sh
 ```

@@ -24,6 +24,29 @@ if ls "$REPO_DIR/hooks/"*.sh 2>/dev/null | grep -q .; then
   echo "  ✓ hooks installed"
 fi
 
+# ── CLAUDE.md and skills ───────────────────────────────────────────────────────
+# Symlinked, not copied, so edits made under ~/.claude land in the repo.
+# A real file or directory already in place is moved to <name>.bak first.
+link() {
+  local src="$1" dest="$2"
+  if [[ -L "$dest" ]]; then
+    [[ "$(readlink "$dest")" == "$src" ]] && return 0
+    rm "$dest"
+  elif [[ -e "$dest" ]]; then
+    mv "$dest" "$dest.bak"
+    echo "  ↪ moved existing ${dest/#$HOME/~} to ${dest/#$HOME/~}.bak"
+  fi
+  ln -s "$src" "$dest"
+}
+
+link "$REPO_DIR/claude/CLAUDE.md" "$CLAUDE_DIR/CLAUDE.md"
+mkdir -p "$CLAUDE_DIR/skills"
+for skill in "$REPO_DIR/skills/"*/; do
+  skill="${skill%/}"
+  link "$skill" "$CLAUDE_DIR/skills/$(basename "$skill")"
+done
+echo "  ✓ CLAUDE.md and skills linked"
+
 # ── Settings ───────────────────────────────────────────────────────────────────
 SETTINGS="$CLAUDE_DIR/settings.json"
 STATUSLINE_CMD="$CLAUDE_DIR/statusline/statusline.sh"

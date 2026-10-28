@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 # Hook: speed bump on `git push` — surfaces a local-validation checklist to the model.
-# Coexists with rtk hook claude (both run on PreToolUse Bash).
 # Register in settings.json under hooks.PreToolUse[matcher=Bash].
 #
 # Opt-in acknowledgement: in a repo where `git config claude.prepushAck true` is set,

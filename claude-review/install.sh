@@ -12,7 +12,7 @@ set -euo pipefail
 
 # Bump deliberately, after reading the diff of tooling/claude-review and
 # tooling/sensitive-scan between the old and new commit.
-REF="${1:-3852705}"
+REF="${1:-c1307c6}"
 SRC="git+https://github.com/kellypj24/data-engineering@${REF}"
 
 command -v uv >/dev/null || { echo "uv not found: https://docs.astral.sh/uv/" >&2; exit 1; }

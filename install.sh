@@ -78,5 +78,14 @@ else
   echo "  ✓ rtk already installed ($(rtk --version 2>/dev/null || echo unknown))"
 fi
 
+# ── Word budget ────────────────────────────────────────────────────────────────
+# Separate merge so the hooks block above can change without touching this one.
+BUDGET_CMD="CLAUDE_HOOK=1 $CLAUDE_DIR/hooks/word-budget.sh"
+jq --arg cmd "$BUDGET_CMD" \
+  '.hooks.SessionStart = [{ "hooks": [{ "type": "command", "command": $cmd }] }]' \
+  "$SETTINGS" > "$SETTINGS.tmp" && mv "$SETTINGS.tmp" "$SETTINGS"
+echo "  ✓ word budget hook installed"
+bash "$CLAUDE_DIR/hooks/word-budget.sh" -v | sed 's/^/     /'
+
 echo ""
 echo "Done. Restart Claude Code to see the status line."

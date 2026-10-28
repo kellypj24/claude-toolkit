@@ -34,6 +34,11 @@ To tweak the display, edit `statusline/statusline.sh` and re-run `bash install.s
 | File | Event | What it does |
 |------|-------|--------------|
 | `hooks/notify-on-stop.sh` | Stop / StopFailure | macOS notification when Claude finishes |
+| `hooks/word-budget.sh` | SessionStart | Flags `~/.claude/CLAUDE.md`, any `MEMORY.md` index or a personal skill over its word budget; silent otherwise. `install.sh` wires it. |
+
+Budgets (400 / 1,000 / 800 words) are constants at the top of the script;
+raise one only by editing it. `bash hooks/word-budget.sh -v` prints every
+count and exits 1 when anything is over.
 
 To enable a hook, add it to `~/.claude/settings.json`:
 

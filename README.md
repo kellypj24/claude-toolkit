@@ -1,6 +1,6 @@
 # claude-toolkit
 
-Portable Claude Code enhancements: status line, hooks, and prompts.
+Portable Claude Code enhancements: status line, hooks, global `CLAUDE.md`, skills and prompts.
 
 ## Install
 
@@ -45,6 +45,18 @@ already registered, so hooks you add by hand survive a reinstall.
 Budgets (400 / 1,000 / 800 words) are constants at the top of
 `word-budget.sh`; raise one only by editing it. `bash hooks/word-budget.sh -v`
 prints every count and exits 1 when anything is over.
+
+## CLAUDE.md and skills
+
+`claude/CLAUDE.md` is the global instruction file. Each directory in `skills/` is a
+personal skill. `install.sh` symlinks them to `~/.claude/CLAUDE.md` and
+`~/.claude/skills/<name>`, so an edit on either side is an edit to the repo; a real
+file already there is moved to `<name>.bak` first.
+
+| Skill | Use |
+|-------|-----|
+| `ship-pr` | Local lint/format/typecheck/test gauntlet, commit, push, open the PR |
+| `plan-archive` | Fold a finished plan into the README, spec or `STATUS.md`; `git mv` it from `docs/plans/` to `docs/archive/YYYY-MM-DD-<slug>.md` |
 
 ## Prompts
 

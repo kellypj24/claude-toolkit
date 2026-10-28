@@ -13,8 +13,7 @@ _Updated 2026-10-28._
   `~/.claude` by `install.sh`.
 - Plan convention: active in `docs/plans/<slug>.md`, done in
   `docs/archive/YYYY-MM-DD-<slug>.md` (the `plan-archive` skill).
-- rtk hook dropped; `install.sh` strips it from earlier installs. The binary is still
-  installed but unused.
+- rtk dropped and uninstalled; `install.sh` strips its hook from earlier installs.
 
 ## Next
 

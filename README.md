@@ -33,23 +33,17 @@ To tweak the display, edit `statusline/statusline.sh` and re-run `bash install.s
 
 | File | Event | What it does |
 |------|-------|--------------|
-| `hooks/notify-on-stop.sh` | Stop / StopFailure | macOS notification when Claude finishes |
-| `hooks/word-budget.sh` | SessionStart | Flags `~/.claude/CLAUDE.md`, any `MEMORY.md` index or a personal skill over its word budget; silent otherwise. `install.sh` wires it. |
+| `hooks/notify-on-stop.sh` | Stop | Chime + macOS notification when Claude finishes (`CLAUDE_STOP_SOUND` overrides) |
+| `hooks/notify-on-input.sh` | Notification | Chime + notification on permission prompts and idle waits (`CLAUDE_INPUT_SOUND` overrides) |
+| `hooks/pre-push-check.sh` | PreToolUse (Bash) | Blocks `git push` until local validation is confirmed; `git config claude.prepushAck true` lets `PREPUSH_ACK=1` through |
+| `hooks/word-budget.sh` | SessionStart | Flags `~/.claude/CLAUDE.md`, any `MEMORY.md` index or a personal skill over its word budget; silent otherwise |
 
-Budgets (400 / 1,000 / 800 words) are constants at the top of the script;
-raise one only by editing it. `bash hooks/word-budget.sh -v` prints every
-count and exits 1 when anything is over.
+`install.sh` registers each hook for its event unless that command is
+already registered, so hooks you add by hand survive a reinstall.
 
-To enable a hook, add it to `~/.claude/settings.json`:
-
-```json
-{
-  "hooks": {
-    "Stop": [{ "type": "command", "command": "~/.claude/hooks/notify-on-stop.sh" }],
-    "StopFailure": [{ "type": "command", "command": "~/.claude/hooks/notify-on-stop.sh" }]
-  }
-}
-```
+Budgets (400 / 1,000 / 800 words) are constants at the top of
+`word-budget.sh`; raise one only by editing it. `bash hooks/word-budget.sh -v`
+prints every count and exits 1 when anything is over.
 
 ## Prompts
 

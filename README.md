@@ -16,7 +16,8 @@ Restart Claude Code. The status line appears at the bottom of every session.
 
 Shows (left to right):
 - **Model** — current Claude model name
-- **Branch** — git branch of the project directory
+- **Directory** — basename of the session's current directory (`~` at home)
+- **Branch** — git branch of that directory
 - **Context %** — percentage of context window used, with a bar (green/yellow/red)
 - **Tokens** — input token count for current context
 - **Cost** — estimated session cost in USD

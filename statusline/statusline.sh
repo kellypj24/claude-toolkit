@@ -14,10 +14,19 @@ rate_5h=$(echo "$input"  | jq -r '[.rate_limits.five_hour.used_percentage // 0] 
 rate_7d=$(echo "$input"  | jq -r '[.rate_limits.seven_day.used_percentage // 0] | .[0] | floor')
 ctx_tokens=$(echo "$input" | jq -r '.context_window.current_usage.input_tokens // 0')
 
-# ── Git branch (from filesystem, not Claude JSON) ──────────────────────────────
-project_dir="${CLAUDE_PROJECT_DIR:-$PWD}"
+# ── Working directory + git branch ────────────────────────────────────────────
+cwd=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // empty')
+[ -z "$cwd" ] && cwd="${CLAUDE_PROJECT_DIR:-$PWD}"
+
+# Show ~ for home, basename otherwise
+if [ "$cwd" = "$HOME" ]; then
+  dir_str="~"
+else
+  dir_str=$(basename "$cwd")
+fi
+
 branch=""
-if branch_raw=$(git -C "$project_dir" rev-parse --abbrev-ref HEAD 2>/dev/null); then
+if branch_raw=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null); then
   branch=" $branch_raw"
 fi
 
@@ -36,6 +45,8 @@ BOLD='\033[1m'
 PURPLE='\033[1;35m'
 CYAN='\033[36m'
 YELLOW='\033[33m'
+BLUE='\033[34m'
+DIM='\033[2m'
 
 if   (( ctx_pct > 80 )); then CTX_CLR='\033[31m'   # red
 elif (( ctx_pct > 50 )); then CTX_CLR='\033[33m'   # yellow
@@ -58,7 +69,8 @@ tok_str=$(awk -v t="$ctx_tokens" 'BEGIN {
 
 # ── Output ────────────────────────────────────────────────────────────────────
 printf "${PURPLE}%s${R}" "$model"
-printf "%s" "$branch"
+printf "  ${BLUE}%s${R}" "$dir_str"
+[ -n "$branch" ] && printf "${DIM}%s${R}" "$branch"
 printf "  ${CTX_CLR}%s%%${R} %s %s" "$ctx_pct" "$bar" "$tok_str"
 printf "  ${CYAN}%s${R}" "$cost_str"
 printf "  5h:${RATE_CLR}%s%%${R}" "$rate_5h"

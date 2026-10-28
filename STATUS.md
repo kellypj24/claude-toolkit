@@ -13,13 +13,12 @@ _Updated 2026-10-28._
   `~/.claude` by `install.sh`.
 - Plan convention: active in `docs/plans/<slug>.md`, done in
   `docs/archive/YYYY-MM-DD-<slug>.md` (the `plan-archive` skill).
+- rtk hook dropped; `install.sh` strips it from earlier installs. The binary is still
+  installed but unused.
 
 ## Next
 
-1. rtk: measure its saving in light-labs' `mart_claude_*` marts and decide whether to keep
-   the hook. It hides some output, and its command rewrites leave auto mode without a
-   verdict.
-2. Statusline progress for background eval runs.
+1. Statusline progress for background eval runs.
 
 ## Open decisions
 

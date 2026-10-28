@@ -81,7 +81,8 @@ updated=$(echo "$existing" | jq \
        "refreshInterval": 10
      }
    }
-   | add_hook("PreToolUse"; {"matcher": "Bash", "hooks": [{"type": "command", "command": "rtk hook claude"}]})
+   # rtk was dropped 2026-10-28; strip its hook from earlier installs.
+   | .hooks.PreToolUse |= ((. // []) | map(.hooks |= map(select(.command != "rtk hook claude"))) | map(select(.hooks | length > 0)))
    | add_hook("PreToolUse"; {"matcher": "Bash", "hooks": [{"type": "command", "command": $prepush}]})
    | add_hook("Stop"; {"hooks": [{"type": "command", "command": $stop}]})
    | add_hook("Notification"; {"hooks": [{"type": "command", "command": $input}]})
@@ -90,15 +91,6 @@ updated=$(echo "$existing" | jq \
 
 echo "$updated" > "$SETTINGS"
 echo "  ✓ settings.json updated"
-
-# ── RTK ────────────────────────────────────────────────────────────────────────
-if ! command -v rtk &>/dev/null; then
-  echo ""
-  echo "  ⚠  rtk not found. Install it to enable token compression (~80% savings):"
-  echo "     brew install rtk"
-else
-  echo "  ✓ rtk already installed ($(rtk --version 2>/dev/null || echo unknown))"
-fi
 
 # ── Word budget ────────────────────────────────────────────────────────────────
 bash "$CLAUDE_DIR/hooks/word-budget.sh" -v | sed 's/^/     /'

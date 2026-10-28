@@ -23,6 +23,9 @@ Shows (left to right):
 - **Cost** — estimated session cost in USD
 - **5h limit** — 5-hour rate limit consumption %
 - **7d limit** — 7-day rate limit consumption %
+- **Eval runs** — `⚙ <stage> <done>/<total> ✓<passed>` per background eval run; hidden when none.
+  Reads `*.run.json` in `CLAUDE_EVAL_DIR` (default `~/light-labs/var/evals`), skipping
+  files untouched for 15 min (a killed run)
 
 The script lives at `statusline/statusline.sh`. `install.sh` copies it to
 `~/.claude/statusline/statusline.sh` and updates `~/.claude/settings.json`.

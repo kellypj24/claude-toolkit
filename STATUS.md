@@ -16,9 +16,11 @@ _Updated 2026-10-28._
 - rtk hook dropped; `install.sh` strips it from earlier installs. The binary is still
   installed but unused.
 
+- Statusline shows background eval progress from `CLAUDE_EVAL_DIR`.
+
 ## Next
 
-1. Statusline progress for background eval runs.
+Nothing queued; see the backlog in memory for candidates.
 
 ## Open decisions
 

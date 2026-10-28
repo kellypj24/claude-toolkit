@@ -16,7 +16,8 @@ Restart Claude Code. The status line appears at the bottom of every session.
 
 Shows (left to right):
 - **Model** — current Claude model name
-- **Branch** — git branch of the project directory
+- **Directory** — basename of the session's current directory (`~` at home)
+- **Branch** — git branch of that directory
 - **Context %** — percentage of context window used, with a bar (green/yellow/red)
 - **Tokens** — input token count for current context
 - **Cost** — estimated session cost in USD
@@ -54,6 +55,12 @@ Ready-to-paste system prompts in `prompts/system-prompts/`:
 | `senior-engineer.md` | General coding sessions |
 | `data-engineer.md` | dbt / Airflow / pipeline work |
 | `rubber-duck.md` | Problem-solving, thinking out loud |
+
+## claude-review
+
+Opt-in pre-push Claude review for any repo that uses pre-commit. Separate
+installer (needs `uv` and network): `bash claude-review/install.sh`, then
+enable per repo. See [claude-review/README.md](claude-review/README.md).
 
 ## Taking it with you
 

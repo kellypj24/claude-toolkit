@@ -1,0 +1,14 @@
+# Merge into a repo's .pre-commit-config.yaml, then:
+#   pre-commit install --hook-type pre-push
+# Runs only on `CLAUDE_REVIEW=1 git push`; a plain push skips it.
+default_install_hook_types: [pre-commit, pre-push]
+repos:
+  - repo: local
+    hooks:
+      - id: claude-review
+        name: claude-review (CLAUDE_REVIEW=1)
+        entry: claude-review
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true

@@ -35,36 +35,33 @@ else
   existing="{}"
 fi
 
-STOP_HOOK="$CLAUDE_DIR/hooks/notify-on-stop.sh"
-INPUT_HOOK="$CLAUDE_DIR/hooks/notify-on-input.sh"
+HOOKS="$CLAUDE_DIR/hooks"
 
-# Merge statusLine + hooks config using jq
+# Merge statusLine, then add each hook only if its command is not already
+# registered for that event, so hooks added outside this repo survive.
 updated=$(echo "$existing" | jq \
   --arg cmd "$STATUSLINE_CMD" \
-  --arg stop "$STOP_HOOK" \
-  --arg input "$INPUT_HOOK" \
-  '. + {
-    "statusLine": {
-      "type": "command",
-      "command": $cmd,
-      "padding": 1,
-      "refreshInterval": 10
-    },
-    "hooks": {
-      "PreToolUse": [
-        {
-          "matcher": "Bash",
-          "hooks": [{ "type": "command", "command": "rtk hook claude" }]
-        }
-      ],
-      "Stop": [
-        { "hooks": [{ "type": "command", "command": $stop }] }
-      ],
-      "Notification": [
-        { "hooks": [{ "type": "command", "command": $input }] }
-      ]
-    }
-  }')
+  --arg stop "$HOOKS/notify-on-stop.sh" \
+  --arg input "$HOOKS/notify-on-input.sh" \
+  --arg prepush "$HOOKS/pre-push-check.sh" \
+  --arg budget "CLAUDE_HOOK=1 $HOOKS/word-budget.sh" \
+  'def add_hook($event; $entry):
+     ($entry.hooks | map(.command)) as $new
+     | if [.hooks[$event][]?.hooks[]?.command] | any(. as $c | $new | index($c))
+       then . else .hooks[$event] += [$entry] end;
+   . + {
+     "statusLine": {
+       "type": "command",
+       "command": $cmd,
+       "padding": 1,
+       "refreshInterval": 10
+     }
+   }
+   | add_hook("PreToolUse"; {"matcher": "Bash", "hooks": [{"type": "command", "command": "rtk hook claude"}]})
+   | add_hook("PreToolUse"; {"matcher": "Bash", "hooks": [{"type": "command", "command": $prepush}]})
+   | add_hook("Stop"; {"hooks": [{"type": "command", "command": $stop}]})
+   | add_hook("Notification"; {"hooks": [{"type": "command", "command": $input}]})
+   | add_hook("SessionStart"; {"hooks": [{"type": "command", "command": $budget}]})')
 
 echo "$updated" > "$SETTINGS"
 echo "  ✓ settings.json updated"
@@ -77,6 +74,9 @@ if ! command -v rtk &>/dev/null; then
 else
   echo "  ✓ rtk already installed ($(rtk --version 2>/dev/null || echo unknown))"
 fi
+
+# ── Word budget ────────────────────────────────────────────────────────────────
+bash "$CLAUDE_DIR/hooks/word-budget.sh" -v | sed 's/^/     /'
 
 echo ""
 echo "Done. Restart Claude Code to see the status line."

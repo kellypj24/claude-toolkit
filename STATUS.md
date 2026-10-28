@@ -14,10 +14,11 @@ _Updated 2026-10-28._
 - Plan convention: active in `docs/plans/<slug>.md`, done in
   `docs/archive/YYYY-MM-DD-<slug>.md` (the `plan-archive` skill).
 - rtk dropped and uninstalled; `install.sh` strips its hook from earlier installs.
+- Statusline shows background eval progress from `CLAUDE_EVAL_DIR`.
 
 ## Next
 
-1. Statusline progress for background eval runs.
+Nothing queued; see the backlog in memory for candidates.
 
 ## Open decisions
 

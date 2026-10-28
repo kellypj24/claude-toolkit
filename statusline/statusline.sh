@@ -30,6 +30,20 @@ if branch_raw=$(git -C "$cwd" rev-parse --abbrev-ref HEAD 2>/dev/null); then
   branch=" $branch_raw"
 fi
 
+# ── Background eval runs ──────────────────────────────────────────────────────
+# light-labs' runner rewrites <run_id>.run.json after every sample. Only files
+# touched in the last 15 min are parsed, so an idle refresh is one find, and a
+# killed run's stale "running" record drops off on its own.
+EVAL_DIR="${CLAUDE_EVAL_DIR:-$HOME/light-labs/var/evals}"
+evals=""
+if [ -d "$EVAL_DIR" ]; then
+  fresh=$(find "$EVAL_DIR" -maxdepth 1 -name '*.run.json' -mmin -15 2>/dev/null)
+  if [ -n "$fresh" ]; then
+    # shellcheck disable=SC2086  # one path per line, none with spaces
+    evals=$(jq -rs 'map(select(.status == "running") | "\(.stage) \(.done)/\(.total) ✓\(.passed)") | join("  ")' $fresh 2>/dev/null || true)
+  fi
+fi
+
 # ── Progress bar (10 chars wide) ──────────────────────────────────────────────
 bar_width=10
 filled=$(awk -v pct="$ctx_pct" -v w="$bar_width" 'BEGIN { n=int(pct*w/100); if(n>w)n=w; print n }')
@@ -75,4 +89,5 @@ printf "  ${CTX_CLR}%s%%${R} %s %s" "$ctx_pct" "$bar" "$tok_str"
 printf "  ${CYAN}%s${R}" "$cost_str"
 printf "  5h:${RATE_CLR}%s%%${R}" "$rate_5h"
 printf "  7d:${YELLOW}%s%%${R}" "$rate_7d"
+[ -n "$evals" ] && printf "  ${PURPLE}⚙ %s${R}" "$evals"
 printf "\n"

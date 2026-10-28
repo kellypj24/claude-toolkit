@@ -35,9 +35,14 @@ else
   existing="{}"
 fi
 
-# Merge statusLine + rtk hook config using jq
+STOP_HOOK="$CLAUDE_DIR/hooks/notify-on-stop.sh"
+INPUT_HOOK="$CLAUDE_DIR/hooks/notify-on-input.sh"
+
+# Merge statusLine + hooks config using jq
 updated=$(echo "$existing" | jq \
   --arg cmd "$STATUSLINE_CMD" \
+  --arg stop "$STOP_HOOK" \
+  --arg input "$INPUT_HOOK" \
   '. + {
     "statusLine": {
       "type": "command",
@@ -51,6 +56,12 @@ updated=$(echo "$existing" | jq \
           "matcher": "Bash",
           "hooks": [{ "type": "command", "command": "rtk hook claude" }]
         }
+      ],
+      "Stop": [
+        { "hooks": [{ "type": "command", "command": $stop }] }
+      ],
+      "Notification": [
+        { "hooks": [{ "type": "command", "command": $input }] }
       ]
     }
   }')

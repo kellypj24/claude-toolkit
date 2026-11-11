@@ -69,6 +69,7 @@ updated=$(echo "$existing" | jq \
   --arg prepush "$HOOKS/pre-push-check.sh" \
   --arg budget "CLAUDE_HOOK=1 $HOOKS/word-budget.sh" \
   --arg guard "$HOOKS/secret-guard.sh" \
+  --arg private "$HOOKS/private-paths-guard.sh" \
   'def add_hook($event; $entry):
      ($entry.hooks | map(.command)) as $new
      | if [.hooks[$event][]?.hooks[]?.command] | any(. as $c | $new | index($c))
@@ -87,6 +88,7 @@ updated=$(echo "$existing" | jq \
    | add_hook("Stop"; {"hooks": [{"type": "command", "command": $stop}]})
    | add_hook("Notification"; {"hooks": [{"type": "command", "command": $input}]})
    | add_hook("SessionStart"; {"hooks": [{"type": "command", "command": $budget}]})
+   | add_hook("PreToolUse"; {"matcher": "Bash", "hooks": [{"type": "command", "command": $private}]})
    | add_hook("UserPromptSubmit"; {"hooks": [{"type": "command", "command": $guard}]})')
 
 echo "$updated" > "$SETTINGS"

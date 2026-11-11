@@ -3,11 +3,12 @@
 Current state only; history is in git and the PRs. Update this file in the same PR as the
 work it describes.
 
-_Updated 2026-10-28._
+_Updated 2026-11-10._
 
 ## Now
 
-- Installed: statusline, notify hooks, `pre-push-check`, `word-budget`, `secret-guard`.
+- Installed: statusline, notify hooks, `pre-push-check`, `word-budget`, `secret-guard`,
+  `private-paths-guard` (inert until `~/.claude/private-paths` exists).
   `install.sh` merges hooks per event, so reruns are safe.
 - `claude/CLAUDE.md` and `skills/` (`ship-pr`, `plan-archive`) are symlinked into
   `~/.claude` by `install.sh`.

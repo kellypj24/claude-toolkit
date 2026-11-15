@@ -35,6 +35,14 @@ Current state only; history stays in git. Read it before resuming work in a repo
 update it in the same PR as the work it describes. Memory points to it and never
 duplicates it.
 
+## Python version
+
+Every Python project pins its interpreter: a `.python-version` (major.minor) beside each
+`pyproject.toml`. Dockerfiles and CI run that version; `requires-python` is the supported
+floor, not the pin. A new project gets the pin with its first commit. Move a pin only
+after the repo's tests pass on the new minor (a weekly canary job where the repo has CI).
+`lab python status --all` audits every checkout.
+
 ## Length
 
 Default to the shortest reply that answers. Most answers are 1-5 sentences or a

@@ -44,6 +44,30 @@ if [ -d "$EVAL_DIR" ]; then
   fi
 fi
 
+# ── Other sessions waiting on you ─────────────────────────────────────────────
+# Claude Code keeps <pid>.json per running session (sessionId, pid, status busy/idle).
+# Listed: sessions other than this one that are not busy and whose pid is alive, by
+# their title (the last ai-title in the log's tail) or registry name.
+CLAUDE_HOME="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+session_id=$(echo "$input" | jq -r '.session_id // empty')
+waiting=""
+if compgen -G "$CLAUDE_HOME/sessions/*.json" >/dev/null; then
+  while IFS=$'\t' read -r pid sid name; do
+    [ -n "$pid" ] && [ "$sid" != "$session_id" ] || continue
+    [[ "$pid" =~ ^[0-9]+$ && "$sid" =~ ^[A-Za-z0-9-]+$ ]] || continue
+    kill -0 "$pid" 2>/dev/null || continue
+    title=""
+    log=$(compgen -G "$CLAUDE_HOME/projects/*/$sid.jsonl" | head -1 || true)
+    if [ -n "$log" ]; then
+      title=$(tail -c 262144 "$log" | grep -a '"type":"ai-title"' | tail -1 \
+        | jq -r '.aiTitle // empty' 2>/dev/null || true)
+    fi
+    label=$(printf '%s' "${title:-$name}" | tr -d '[:cntrl:]' | cut -c1-32)
+    waiting+="${waiting:+ · }${label:-$pid}"
+  done < <(jq -r 'select(.status != "busy") | [.pid, .sessionId, (.name // "")] | @tsv' \
+    "$CLAUDE_HOME"/sessions/*.json 2>/dev/null || true)
+fi
+
 # ── Progress bar (10 chars wide) ──────────────────────────────────────────────
 bar_width=10
 filled=$(awk -v pct="$ctx_pct" -v w="$bar_width" 'BEGIN { n=int(pct*w/100); if(n>w)n=w; print n }')
@@ -91,3 +115,5 @@ printf "  5h:${RATE_CLR}%s%%${R}" "$rate_5h"
 printf "  7d:${YELLOW}%s%%${R}" "$rate_7d"
 [ -n "$evals" ] && printf "  ${PURPLE}⚙ %s${R}" "$evals"
 printf "\n"
+[ -n "$waiting" ] && printf "${YELLOW}waiting on you:${R} %s\n" "$waiting"
+exit 0

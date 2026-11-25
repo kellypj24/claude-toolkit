@@ -3,7 +3,7 @@
 Current state only; history is in git and the PRs. Update this file in the same PR as the
 work it describes.
 
-_Updated 2026-11-10._
+_Updated 2026-11-24._
 
 ## Now
 
@@ -16,6 +16,8 @@ _Updated 2026-11-10._
   `docs/archive/YYYY-MM-DD-<slug>.md` (the `plan-archive` skill).
 - rtk dropped and uninstalled; `install.sh` strips its hook from earlier installs.
 - Statusline shows background eval progress from `CLAUDE_EVAL_DIR`.
+- Statusline's second line names other live sessions waiting on PJ (same registry
+  light-labs' `lab dash` reads).
 
 ## Next
 

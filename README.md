@@ -26,6 +26,9 @@ Shows (left to right):
 - **Eval runs** — `⚙ <stage> <done>/<total> ✓<passed>` per background eval run; hidden when none.
   Reads `*.run.json` in `CLAUDE_EVAL_DIR` (default `~/light-labs/var/evals`), skipping
   files untouched for 15 min (a killed run)
+- **Waiting on you** — a second line naming other live sessions that are not busy, by
+  title; hidden when none. Reads `~/.claude/sessions/<pid>.json` (pid alive, not this
+  session) and the last `ai-title` in each session's log
 
 The script lives at `statusline/statusline.sh`. `install.sh` copies it to
 `~/.claude/statusline/statusline.sh` and updates `~/.claude/settings.json`.
